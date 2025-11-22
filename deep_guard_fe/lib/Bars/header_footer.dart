@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool showBack;
   final bool showHelp;
+  final VoidCallback? onBack;
 
   const AppHeader({
     super.key,
     this.showBack = false,  // 파라미터 기본값
     this.showHelp = false,
+    this.onBack,
   });    // 헤더 생성자 생성
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       leading: this.showBack
           ? IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-        onPressed: () => Navigator.pop(context),
+        onPressed: onBack ?? () => Navigator.pop(context),
       )
           : const SizedBox.shrink(),    // 빈 위젯을 반환할 때 사용
 

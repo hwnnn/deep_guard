@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Bars/header_footer.dart';
+import '../Routers/routing_point.dart';
 import '../Widgets/elevated_button.dart';
 
 class TermsAgreementPage extends StatelessWidget {
@@ -41,12 +42,14 @@ class TermsAgreementPage extends StatelessWidget {
               width: double.infinity,
               fontSize: 16,
               onPressed: () {
-                // TODO: 약관 동의 페이지로 이동 예정
+                // Route : Terms Agreement
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const TermsAgreementPage(),
-                  ),
+                  RoutingPoint.generateRoute(
+                      settings: RouteSettings(
+                          name: RoutingPoint.upload
+                      )
+                  )
                 );
               },
             ),
