@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Bars/header_footer.dart';
+import '../Widgets/elevated_button.dart';
 
 class TermsAgreementPage extends StatelessWidget {
   const TermsAgreementPage({super.key});
@@ -16,7 +17,7 @@ class TermsAgreementPage extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               "Terms & Conditions",
               style: TextStyle(
@@ -29,6 +30,28 @@ class TermsAgreementPage extends StatelessWidget {
               "Agreements_Terms\n",
               style: TextStyle(fontSize: 16, height: 1.5),
             ),
+
+            const Spacer(),
+
+            // Get Started 버튼
+            CustomElevatedButton(
+              text: "Get Agreements",
+              backgroundColor: Colors.blue,
+              textColor: Colors.white,
+              width: double.infinity,
+              fontSize: 16,
+              onPressed: () {
+                // TODO: 약관 동의 페이지로 이동 예정
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TermsAgreementPage(),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 40),
           ],
         ),
       ),

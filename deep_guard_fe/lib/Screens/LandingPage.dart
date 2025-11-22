@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../Bars/header_footer.dart';
 import '../Widgets/elevated_button.dart';
-import 'TermsAgreementPage.dart';
+import '../Routers/routing_point.dart';
 
 class LandingPage extends StatelessWidget {
   final String title;
-
   const LandingPage({super.key, required this.title});
 
   @override
@@ -53,17 +52,19 @@ class LandingPage extends StatelessWidget {
             // Get Started 버튼
             CustomElevatedButton(
               text: "Get Started",
-              backgroundColor: const Color(0xFF007BFF),
+              backgroundColor: Colors.blue,
               textColor: Colors.white,
               width: double.infinity,
               fontSize: 16,
               onPressed: () {
                 // TODO: 약관 동의 페이지로 이동 예정
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const TermsAgreementPage(),
-                  ),
+                    context,
+                    RoutingPoint.generateRoute(
+                        settings: RouteSettings(
+                            name: RoutingPoint.termsAgreement
+                        )
+                    )
                 );
               },
             ),
