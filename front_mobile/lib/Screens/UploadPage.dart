@@ -16,6 +16,7 @@ class _UploadPageState extends State<UploadPage> {
   ImageProvider? origImage;
   ImageProvider? dfImage;
   bool enableBack = false;
+  bool enableHelp = true;
   // 업로드 전/후 상태
   bool get hasOrigImage => origImage != null;
   bool get hasDfImage => dfImage != null;
@@ -35,19 +36,21 @@ class _UploadPageState extends State<UploadPage> {
     });
   }
 
+  void _onBack() {
+    setState(() {
+      this.enableBack = false;
+      this.origImage = null;
+      this.dfImage = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: DeepGuardHeader(
-        showBack: enableBack,
-        showHelp: false,
-        onBack: (){
-          setState(() {
-            enableBack = false;
-            origImage = null;
-            dfImage = null;
-          });
-        },
+        showBack: this.enableBack,
+        showHelp: this.enableHelp,
+        onBack: _onBack
       ),
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavBar(

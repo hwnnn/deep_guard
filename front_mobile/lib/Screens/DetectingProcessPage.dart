@@ -45,7 +45,7 @@ class DetectingPage extends StatelessWidget{
                   Navigator.push(
                     context,
                     RoutingPoint.generateRoute(
-                        settings: RouteSettings(
+                        settings: const RouteSettings(
                             name: RoutingPoint.detectionsuccessed
                         )
                     )
@@ -100,7 +100,7 @@ class DetectionSuccessedPage extends StatelessWidget{
                       Navigator.push(
                           context,
                           RoutingPoint.generateRoute(
-                              settings: RouteSettings(
+                              settings: const RouteSettings(
                                   name: RoutingPoint.detectionresult
                               )
                           )
@@ -155,7 +155,7 @@ class DetectionFailedPage extends StatelessWidget{
                       Navigator.push(
                           context,
                           RoutingPoint.generateRoute(
-                              settings: RouteSettings(
+                              settings: const RouteSettings(
                                   name: RoutingPoint.detecting
                               )
                           )

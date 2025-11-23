@@ -15,12 +15,26 @@ class DetectionResultPage extends StatelessWidget {
     required this.confidence,
   });
 
+  void _toUploadPage(BuildContext context){
+    Navigator.push(
+      context,
+      RoutingPoint.generateRoute(
+        settings: const RouteSettings(
+          name: RoutingPoint.upload,
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: DeepGuardHeader(
         showBack: true,
-        showHelp: false,
+        showHelp: true,
+        // 콜백 실행 시 업로드 페이지로 진입
+        onBack: (){
+          _toUploadPage(context);
+        }
       ),
 
       bottomNavigationBar: BottomNavBar(

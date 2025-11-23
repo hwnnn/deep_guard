@@ -24,7 +24,8 @@ class DeepGuardHeader extends StatelessWidget implements PreferredSizeWidget {
       leading: this.showBack
           ? IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-        onPressed: onBack ?? () => Navigator.pop(context),
+        // onPressed: onBack ?? () => Navigator.pop(context),
+        onPressed: onBack
       )
           : const SizedBox.shrink(),    // 빈 위젯을 반환할 때 사용
 
