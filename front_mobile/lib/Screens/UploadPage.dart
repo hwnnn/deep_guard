@@ -5,6 +5,7 @@ import '../Bars/navigation.dart';
 import '../Widgets/elevated_button.dart';
 import '../Widgets/reusable_widgets.dart';
 import '../Utils/asset_managers.dart';
+import '../Services/request_to_server.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -28,7 +29,7 @@ class _UploadPageState extends State<UploadPage> {
   final testDeep = AssetsManager.find('testDeep.png');
 
   // 업로드 버튼 클릭 시 호출될 함수 (더미 처리)
-  void _pickOrigImage() {
+  void _pickOrigImage() async {
     setState(() {
       enableBack = true;
       origImage = AssetImage(testOrig ?? ""); // TODO: 이미지 선택 로직
