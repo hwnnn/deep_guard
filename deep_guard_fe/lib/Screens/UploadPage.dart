@@ -88,7 +88,20 @@ class _UploadPageState extends State<UploadPage> {
                 ],
               ),
 
-              const SizedBox(height: 35),
+              const SizedBox(height: 200),
+
+              // 2. 가이드 안내 버튼
+              CustomElevatedButton(
+                text: "Tool Guidance",
+                textColor: Colors.white,
+                fontSize: 16,
+                backgroundColor: Colors.blue, // 비활성화 색
+                width: MediaQuery.of(context).size.width * 0.5,
+                padding: EdgeInsets.all(0),
+                onPressed: () {}
+              ),
+
+              const SizedBox(height: 30),
 
               // 3. Detection 버튼 (둘 다 업로드되어야 활성화)
               CustomElevatedButton(
@@ -101,14 +114,14 @@ class _UploadPageState extends State<UploadPage> {
                 width: MediaQuery.of(context).size.width * 0.85,
                 onPressed: (hasOrigImage && hasDfImage)
                     ? () {
-                  // Navigator.push(
-                  //   context,
-                  //   RoutingPoint.generateRoute(
-                  //     settings: const RouteSettings(
-                  //       name: RoutingPoint.detectionResult,
-                  //     ),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    RoutingPoint.generateRoute(
+                      settings: const RouteSettings(
+                        name: RoutingPoint.detectionresult,
+                      ),
+                    ),
+                  );
                 }
                     : null,
               ),

@@ -6,7 +6,8 @@ class CustomElevatedButton extends StatelessWidget {
   final double fontSize;
   final Color backgroundColor;
   final double width;
-  final VoidCallback? onPressed;  // 버튼 클릭 시 작동할 콜백 함수
+  final VoidCallback? onPressed;// 버튼 클릭 시 작동할 콜백 함수
+  final EdgeInsets? padding;
 
   const CustomElevatedButton({
     super.key,
@@ -16,6 +17,7 @@ class CustomElevatedButton extends StatelessWidget {
     required this.backgroundColor,
     required this.width,
     this.onPressed,
+    this.padding
   });
 
   @override
@@ -30,6 +32,9 @@ class CustomElevatedButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           elevation: 0,
+          padding: this.padding == null ?
+              EdgeInsets.symmetric(horizontal: 16, vertical: 8) :
+              this.padding
         ),
         onPressed: onPressed,
         child: Text(
