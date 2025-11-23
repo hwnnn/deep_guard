@@ -4,6 +4,7 @@ import '../Routers/routing_point.dart';
 import '../Bars/navigation.dart';
 import '../Widgets/elevated_button.dart';
 import '../Widgets/reusable_widgets.dart';
+import '../Utils/asset_managers.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -21,18 +22,23 @@ class _UploadPageState extends State<UploadPage> {
   bool get hasOrigImage => origImage != null;
   bool get hasDfImage => dfImage != null;
 
+  // AssetManager를 통한 애셋 자동 로드 (이미지 요청 성공 확인 후 사용자 갤러리에서 업로드하면 어셋 디렉터리의 test_images 디렉터리에 캐싱하는 방식으로 수정 예정)
+  // 일단 시연할 때 디버깅 돌리는 상황 한정으로 존재하면 됨
+  final testOrig = AssetsManager.find('testOrig.png');
+  final testDeep = AssetsManager.find('testDeep.png');
+
   // 업로드 버튼 클릭 시 호출될 함수 (더미 처리)
   void _pickOrigImage() {
     setState(() {
       enableBack = true;
-      origImage = const AssetImage('assets/sample_orig.jpg'); // TODO: 이미지 선택 로직
+      origImage = AssetImage(testOrig ?? ""); // TODO: 이미지 선택 로직
     });
   }
 
   void _pickDfImage() {
     setState(() {
       enableBack = true;
-      dfImage = const AssetImage('assets/sample_df.jpg'); // TODO: 이미지 선택 로직
+      dfImage = AssetImage(testDeep ?? ""); // TODO: 이미지 선택 로직
     });
   }
 

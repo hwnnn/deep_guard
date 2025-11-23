@@ -59,9 +59,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/analyzing_icons/analyzing.png
-    - assets/analyzing_animations/successed.gif
-    - assets/analyzing_animations/failed.gif
+    - assets/analyzing_icons/
+    - assets/analyzing_animations/
+    - assets/test_images/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

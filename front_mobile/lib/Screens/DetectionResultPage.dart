@@ -39,7 +39,11 @@ class DetectionResultPage extends StatelessWidget {
 
       bottomNavigationBar: BottomNavBar(
         selectedIndex: 0,
-        onTap: (i) {},
+        onTap: (i) {
+          if (i == 0){
+            _toUploadPage(context);
+          }
+        },
       ),
 
       backgroundColor: Colors.white,

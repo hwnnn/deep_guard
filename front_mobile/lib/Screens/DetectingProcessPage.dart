@@ -3,12 +3,15 @@ import '../Bars/header_footer.dart';
 import '../Bars/navigation.dart';
 import '../Widgets/elevated_button.dart';
 import '../Routers/routing_point.dart';
+import '../Utils/asset_managers.dart';
 
 class DetectingPage extends StatelessWidget{
 
   const DetectingPage({super.key});
 
   Widget build(BuildContext context){
+    final analyzingicon = AssetsManager.find('analyzing.png');
+
     return Scaffold(
       appBar: DeepGuardHeader(
         showBack: false,
@@ -33,7 +36,7 @@ class DetectingPage extends StatelessWidget{
             ),
             const SizedBox(height: 60),
             Image(
-              image: const AssetImage('assets/analyzing_icons/analyzing.png'),
+              image: AssetImage(analyzingicon ?? ""),
             ),
             CustomElevatedButton(
                 text: 'Debuggingtest',
@@ -64,6 +67,9 @@ class DetectionSuccessedPage extends StatelessWidget{
   const DetectionSuccessedPage({super.key});
 
   Widget build(BuildContext context){
+
+    final successGif = AssetsManager.find('successed.gif');
+
     return Scaffold(
         appBar: DeepGuardHeader(
           showBack: false,
@@ -88,7 +94,7 @@ class DetectionSuccessedPage extends StatelessWidget{
                 ),
                 const SizedBox(height: 60),
                 Image(
-                  image: const AssetImage('assets/analyzing_animations/successed.gif'),
+                  image: AssetImage(successGif ?? ""),
                 ),
                 CustomElevatedButton(
                     text: 'Show Report',
@@ -119,6 +125,9 @@ class DetectionFailedPage extends StatelessWidget{
   const DetectionFailedPage({super.key});
 
   Widget build(BuildContext context){
+
+    final failedGif = AssetsManager.find('failed.gif');
+
     return Scaffold(
         appBar: DeepGuardHeader(
           showBack: false,
@@ -143,7 +152,7 @@ class DetectionFailedPage extends StatelessWidget{
                 ),
                 const SizedBox(height: 60),
                 Image(
-                  image: const AssetImage('assets/analyzing_animations/failed.gif'),
+                  image: AssetImage(failedGif ?? ""),
                 ),
                 CustomElevatedButton(
                     text: 'Retry',

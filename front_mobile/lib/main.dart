@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'Screens/LandingPage.dart';
 import 'Routers/routing_point.dart';
+import 'Utils/asset_managers.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AssetsManager.loadAssetsMap();
   runApp(const MyApp());
 }
 
