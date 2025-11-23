@@ -1,14 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 Future<Map<String, dynamic>> requestToServer(String endpoint, String type, Map<String, dynamic> data, Map<String, String> headers) async {
   final dio = Dio();
-  final String requestURL = 'http://localhost:8000' + endpoint;
+  final String requestURL = 'http://10.0.2.2:8000' + endpoint;  // 디버깅용 localhost -> 10.0.2.2
   try {
     Response<dynamic> response = new Response(
         requestOptions: RequestOptions()
     );
-    
+
     if (type == 'POST'){
       response = await dio.post(
         requestURL, // 👉 백엔드 API 주소
@@ -27,9 +26,7 @@ Future<Map<String, dynamic>> requestToServer(String endpoint, String type, Map<S
         ),
       );
     }
-
-    Map<String, dynamic> responsedata = response.data;
-    return responsedata;
+    return response.data;
   } catch (e) {
     return {};
   }

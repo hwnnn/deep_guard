@@ -1,11 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../Bars/header_footer.dart';
 import '../Routers/routing_point.dart';
 import '../Bars/navigation.dart';
+import '../Services/endpoint.dart';
 import '../Widgets/elevated_button.dart';
 import '../Widgets/reusable_widgets.dart';
 import '../Utils/asset_managers.dart';
 import '../Services/request_to_server.dart';
+import '../Services/endpoint.dart';
 
 class UploadPage extends StatefulWidget {
   const UploadPage({super.key});
@@ -50,6 +53,11 @@ class _UploadPageState extends State<UploadPage> {
       this.dfImage = null;
     });
   }
+
+  void _sendImageToServer() async{
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
