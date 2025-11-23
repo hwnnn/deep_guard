@@ -16,32 +16,89 @@
 
 ## 🚀 주요 기능
 
+### 딥페이크 탐지 (5가지 모델)
+- **CNN Detector**: OpenCV 기반 초고속 탐지 (0.05초)
+- **DeepFace Detector**: 감정/나이/성별 분석 (100% 신뢰도)
+- **Face Recognition Detector**: 68포인트 랜드마크 분석 (0.21초)
+- **InsightFace Detector**: 512D 임베딩 분석 (0.13초)
+- **Ensemble Detector** ⭐ **추천**: 3가지 모델 결합 (89.4% 신뢰도)
+
+자세한 성능 비교는 [PERFORMANCE_COMPARISON.md](PERFORMANCE_COMPARISON.md) 참조
+
+### 딥페이크 생성 (2가지 모델)
+- **SimpleFaceSwapGenerator**: OpenCV 기반 빠른 얼굴 스왑 (0.5초)
+- **InsightFaceGenerator** ⭐: ONNX 기반 고급 얼굴 스왑 (0.91초)
+  - 512차원 얼굴 임베딩
+  - buffalo_l 모델 (5개 ONNX 모델)
+  - 자동 얼굴 탐지 및 매칭
+  - 피부톤 조정 및 자연스러운 블렌딩
+
+### 기타 기능
 - **통합 API 엔드포인트**: 웹/모바일 클라이언트 모두 단일 API로 처리
 - **모듈화된 아키텍처**: 의존성 주입 패턴으로 모델 교체 용이
-- **확장 가능한 설계**: 실제 딥페이크 모델로 쉽게 교체 가능한 인터페이스
 - **CORS 지원**: 프론트엔드 개발 편의를 위한 Cross-Origin 설정
 - **자동 문서화**: FastAPI 기본 제공 Swagger UI (`/docs`)
+- **상세 API 명세서**: [API_SPECIFICATION.md](API_SPECIFICATION.md) 참조
 
 ## 📁 프로젝트 구조
 
 ```
-deep_guard/
+deep_guard/server/
+├── models/                              # AI 모델 레이어
+│   ├── face_swap/
+│   │   ├── base.py                      # FaceSwapModel 추상 인터페이스
+│   │   └── dummy_model.py               # 더미 모델 구현체
+│   ├── deepfake_detection/              # 딥페이크 탐지 모델들 (5가지)
+│   │   ├── base.py                      # DeepfakeDetectorModel 추상 인터페이스
+│   │   ├── cnn_detector.py              # CNN 기반 탐지 (0.05초)
+│   │   ├── deepface_detector.py         # DeepFace 기반 탐지 (100% 신뢰도)
+│   │   ├── face_recognition_detector.py # face_recognition + dlib (0.21초)
+│   │   ├── insightface_detector.py      # InsightFace 기반 탐지 (0.13초)
+│   │   └── ensemble_detector.py         # 3가지 모델 앙상블 (추천)
+│   └── deepfake_generation/             # 딥페이크 생성 모델들 (2가지)
+│       ├── base.py                      # DeepfakeGeneratorModel 추상 인터페이스
+│       ├── face_swap_generator.py       # 기본 얼굴 스왑 (0.5초)
+│       └── insightface_generator.py     # InsightFace 얼굴 스왑 (0.91초, 고품질)
 ├── app/
-│   ├── main.py                 # FastAPI 앱 엔트리포인트 & 라우터 등록
-│   ├── core_config.py          # 환경변수 기반 설정 관리
-│   ├── dependencies.py         # 의존성 주입 (모델 인스턴스 제공)
+│   ├── main.py                          # FastAPI 앱 엔트리포인트
+│   ├── core_config.py                   # 환경변수 기반 설정 관리
+│   ├── dependencies.py                  # 의존성 주입
 │   ├── routers/
-│   │   └── server.py           # 통합 추론 API 라우터
+│   │   └── server.py                    # API 엔드포인트 (라우터 레이어)
 │   └── services/
-│       └── face_swap/
-│           ├── base.py         # FaceSwapModel 추상 인터페이스
-│           └── dummy_model.py  # 더미 구현 (개발/테스트용)
-├── tests/
-│   └── test_health.py          # API 테스트
-├── images/                     # 테스트용 이미지 (샘플)
-├── requirements.txt            # Python 의존성
-├── .gitignore
+│       ├── __init__.py
+│       ├── inference_service.py                # 추론 비즈니스 로직
+│       ├── face_swap_service.py                # Face Swap 서비스 로직
+│       ├── deepfake_detection_service.py       # 딥페이크 탐지 서비스
+│       └── deepfake_generation_service.py      # 딥페이크 생성 서비스
+├── tests/                               # 테스트
+├── images/                              # 테스트용 이미지
+├── requirements.txt                     # Python 의존성
+├── API_SPECIFICATION.md                 # API 명세서
 └── README.md
+```
+
+### 아키텍처 레이어
+
+- **Model Layer** (`models/`): AI 모델 구현체
+  - `face_swap/`: Face Swap 모델 정의 및 구현
+  - `deepfake_detection/`: 딥페이크 탐지 모델 (CNN 기반)
+  - `deepfake_generation/`: 딥페이크 생성 모델 (얼굴 교체)
+- **Router Layer** (`app/routers/`): API 엔드포인트 정의, 요청/응답 처리
+- **Service Layer** (`app/services/`): 비즈니스 로직 구현
+  - `inference_service.py`: 추론 서비스 (파일 검증, 이미지 처리)
+  - `face_swap_service.py`: Face Swap 서비스 (모델 사용 로직)
+  - `deepfake_detection_service.py`: 딥페이크 탐지 서비스
+  - `deepfake_generation_service.py`: 딥페이크 생성 서비스
+- **Config Layer** (`core_config.py`, `dependencies.py`): 설정 및 의존성 관리
+
+### 테스트
+
+딥페이크 탐지 및 생성 기능 테스트:
+
+```bash
+python3 test_deepfake.py
+```
 ```
 
 ## ⚙️ 설치 및 실행

@@ -35,8 +35,6 @@ env/
 .idea/
 *.swp
 *.swo
-*~
-.DS_Store
 
 # Environment variables
 .env
@@ -63,19 +61,36 @@ htmlcov/
 *.sqlite3
 
 # Images (generated results)
-images/result.jpg
+images/result*.jpg
 images/output*.jpg
 images/test*.jpg
+images/*_generated.jpg
+images/insightface_generated.jpg
 
-# Model weights (if any large files)
+# Backup files
+*.backup
+*.bak
+
+# Model weights and cache (exclude actual model weight files, not source code)
 *.pth
 *.pt
 *.h5
 *.onnx
 *.pb
-models/
+*.caffemodel
 weights/
 checkpoints/
+.insightface/
+
+# DeepFace models cache
+.deepface/
+
+# Face recognition models cache
+face_recognition_models/
+
+# Temporary files
+*.tmp
+*.temp
 
 # macOS
 .DS_Store
@@ -84,3 +99,6 @@ checkpoints/
 
 # Thumbnails
 ._*
+
+# Documentation PDFs (generated from markdown)
+*.pdf
