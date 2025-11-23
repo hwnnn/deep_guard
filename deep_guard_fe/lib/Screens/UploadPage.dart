@@ -38,7 +38,7 @@ class _UploadPageState extends State<UploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppHeader(
+      appBar: DeepGuardHeader(
         showBack: enableBack,
         showHelp: false,
         onBack: (){
@@ -118,7 +118,7 @@ class _UploadPageState extends State<UploadPage> {
                     context,
                     RoutingPoint.generateRoute(
                       settings: const RouteSettings(
-                        name: RoutingPoint.detectionresult,
+                        name: RoutingPoint.detecting,
                       ),
                     ),
                   );

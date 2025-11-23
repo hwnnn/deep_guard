@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 // 생성자 생성 -> 빌드, preferredSize
-class AppHeader extends StatelessWidget implements PreferredSizeWidget {
+class DeepGuardHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool showBack;
   final bool showHelp;
   final VoidCallback? onBack;
 
-  const AppHeader({
+  const DeepGuardHeader({
     super.key,
     this.showBack = false,  // 파라미터 기본값
     this.showHelp = false,

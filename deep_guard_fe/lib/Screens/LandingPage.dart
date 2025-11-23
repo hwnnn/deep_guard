@@ -11,7 +11,7 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // 뒤로가기 X, 도움말
     return Scaffold(
-      appBar: const AppHeader(
+      appBar: const DeepGuardHeader(
         showBack: false,
         showHelp: false,
       ),

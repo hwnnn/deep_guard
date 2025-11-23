@@ -18,7 +18,7 @@ class DetectionResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppHeader(
+      appBar: DeepGuardHeader(
         showBack: true,
         showHelp: false,
       ),

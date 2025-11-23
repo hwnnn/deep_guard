@@ -9,7 +9,7 @@ class TermsAgreementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppHeader(
+      appBar: const DeepGuardHeader(
         showBack: false,
         showHelp: false,
       ),
