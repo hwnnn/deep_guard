@@ -1,7 +1,8 @@
 import React, { useRef, useState, type ChangeEvent } from 'react'
 import styled from 'styled-components'
 import { FaRegCircleQuestion } from "react-icons/fa6";
-
+import { useNavigate } from 'react-router-dom';
+import { useDeepfakeDetection } from '../hooks/useDeepfakeDetection';
 const getFileUrl = (file: File | null): string | undefined => {
     if (!file) return undefined;
     return URL.createObjectURL(file);
@@ -9,6 +10,7 @@ const getFileUrl = (file: File | null): string | undefined => {
 
 const StyledMainPage = () => {
 
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [originFile, setOriginFile] = useState<File|null>(null);
     const [deepfakeFile, setDeepfakeFile] = useState<File|null>(null);
@@ -20,6 +22,22 @@ const StyledMainPage = () => {
         setIsOpen(!value)
     }
 
+    const handleMove = () => {
+        // 파일 업로드 검증 (필수)
+        if (!originFile || !deepfakeFile) {
+            alert('원본 파일과 딥페이크 파일을 모두 업로드해주세요.');
+            return;
+        }
+        navigate('/analyze', {
+          state: {
+            targetFile: deepfakeFile
+          }
+        })
+
+    }
+
+
+    // 2개 일. 때
     const handleUploadClick = (type: 'original' | 'deepfake') => {
         if (type === 'original' && originalInputRef.current){
             originalInputRef.current.click();
@@ -102,7 +120,7 @@ const StyledMainPage = () => {
                 {!originFile && (
                     <>
                         <h1>Tab to upload</h1>
-                        <p>Upload an **Original** video or image to check for deepfakes</p>
+                        <p>Upload an Original video or image to check for deepfakes</p>
                         <S.UploadButton>Upload</S.UploadButton>
                     </>
                 )}
@@ -128,7 +146,7 @@ const StyledMainPage = () => {
                 {!deepfakeFile && (
                     <>
                         <h1>Tab to upload</h1>
-                        <p>Upload a **Deepfake** video or image to check for deepfakes</p>
+                        <p>Upload a Deepfake video or image to check for deepfakes</p>
                         <S.UploadButton>Upload</S.UploadButton>
                     </>
                 )}
@@ -141,7 +159,7 @@ const StyledMainPage = () => {
                 )}
             </S.RightImageBox>
         </S.MainBody>
-        <S.CompareButton>
+        <S.CompareButton onClick = {handleMove}>
             Compare Started
         </S.CompareButton>
     </S.MainContainer>
