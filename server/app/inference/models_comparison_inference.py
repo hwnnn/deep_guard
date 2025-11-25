@@ -6,7 +6,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from models.deepfake_detection import (
+from app.models import (
     CNNDeepfakeDetector,
     DeepFaceDetector,
     FaceRecognitionDetector,

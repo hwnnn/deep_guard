@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from ..dependencies import get_deepfake_detector
-from ..database import get_db, DatabaseManager
+from app.core.dependencies import get_deepfake_detector, get_db
+from app.db import DatabaseManager
 import uuid
 from datetime import datetime
 

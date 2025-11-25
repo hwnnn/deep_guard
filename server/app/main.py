@@ -1,11 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from .routers import server
-from .core_config import get_settings
-from .database import db
+from app.api import server
+from app.core import get_settings
+from app.db import db
 import time
-from fastapi import Request
 
 settings = get_settings()
 
