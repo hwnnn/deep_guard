@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import type { DetectionResponse } from '../types/types';
-
+import TempImg from '/Users/chajaesig/deep_guard/front_web/src/assets/react.svg'
 const StyledResultPage = () => {
 
     const location = useLocation();
@@ -13,7 +13,7 @@ const StyledResultPage = () => {
     const result = state?.resultData;
 
     const [originMedia, setOriginMedia] = useState<string | null>(null);
-    const [deepfakeMedia, setDeepfakeMedia] = useState<string | null>(null);
+    const [deepfakeInputRef, setDeepfakeInputRef] = useState<string | null>(null);
 
     const getMediaType = (url: string) => {
         if (!url) return null;
@@ -45,7 +45,7 @@ const StyledResultPage = () => {
             <S.SubTitle>Confidence: {result ? result?.detection_result.confidence : '-' }</S.SubTitle>
 
             <S.MainBody>
-                <S.LeftImageBox hasFile={!!originMedia}>
+                {/* <S.LeftImageBox hasFile={!!originMedia}>
                     {originMedia ? (
                         <>
                             {renderPreview(originMedia)}
@@ -71,7 +71,13 @@ const StyledResultPage = () => {
                     ) : (
                         <h1>No Media</h1>
                     )}
-                </S.RightImageBox>
+
+                
+                </S.RightImageBox> */}
+
+                <S.MainImageBox>
+                    <S.PreviewImage src={TempImg} alt="TempImg"/>
+                </S.MainImageBox>
             </S.MainBody>
 
             <S.ResultSection>
@@ -123,6 +129,37 @@ const S = {
         gap: 20px;
         margin-bottom: 30px;
     `,
+
+    MainImageBox: styled.div`
+        border: 2px dashed #ccc;
+        border-radius: 10px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-basis: 70%;
+        height: 35vh;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+        background-color: white;
+    
+    
+        h1 {
+          font-size: 1.5em;
+          margin-bottom: 10px;
+          color: #555;
+          display: 'none';
+        }
+    
+        p {
+          font-size: 0.9em;
+          color: #777;
+          margin-bottom: 20px;
+          display: 'none';
+        }
+      `,
 
     LeftImageBox: styled.div<{ hasFile: boolean }>`
         border: 2px dashed ${props => props.hasFile ? 'transparent' : '#ccc'};

@@ -24,33 +24,42 @@ const StyledMainPage = () => {
 
     const handleMove = () => {
         // 파일 업로드 검증 (필수)
-        if (!originFile || !deepfakeFile) {
-            alert('원본 파일과 딥페이크 파일을 모두 업로드해주세요.');
+        //if (!originFile || !deepfakeFile) {
+        //    alert('원본 파일과 딥페이크 파일을 모두 업로드해주세요.');
+        //    return;
+        if(!deepfakeFile)
+          {
+            alert('딥 페이크 의심 파일을 업로드 해주세요.')
             return;
-        }
+          }
         navigate('/analyze', {
           state: {
             targetFile: deepfakeFile
           }
         })
+      }
 
-    }
+    
 
 
     // 2개 일. 때
-    const handleUploadClick = (type: 'original' | 'deepfake') => {
-        if (type === 'original' && originalInputRef.current){
-            originalInputRef.current.click();
-        } else if (type === 'deepfake' && deepfakeInputRef.current){
-            deepfakeInputRef.current.click();
-        }
+    //const handleUploadClick = (type: 'original' | 'deepfake') => {
+    //    if (type === 'original' && originalInputRef.current){
+    //        originalInputRef.current.click();
+    //    } else if (type === 'deepfake' && deepfakeInputRef.current){
+    //        deepfakeInputRef.current.click();
+    //    }
+    //}
+
+    const handleUploadClick = () => {
+      if (deepfakeInputRef.current)
+        deepfakeInputRef.current.click();
     }
 
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>, type: 'original' | 'deepfake') => {
-        if (event.target.files && event.target.files.length > 0) {
-            const file = event.target.files[0];
-            
-            const MAX_SIZE = 1048576 * 3;
+    const handleFileChange = (event:ChangeEvent<HTMLInputElement>) => {
+            if (event.target.files && event.target.files.length > 0) {
+              const file = event.target.files[0];
+              const MAX_SIZE = 1048576 * 3;
             if (file.size > MAX_SIZE) {
                 alert(`파일 크기가 3MB를 초과합니다. (${(file.size / 1048576).toFixed(2)} MB). 다른 파일을 선택해주세요.`);
                 if (event.target) {
@@ -58,16 +67,33 @@ const StyledMainPage = () => {
                 }
                 return;
             }
-
-            if (type === 'original'){
-                if (originFile) URL.revokeObjectURL(getFileUrl(originFile) as string);
-                setOriginFile(file);
-            } else if (type === 'deepfake'){
-                if (deepfakeFile) URL.revokeObjectURL(getFileUrl(deepfakeFile) as string);
-                setDeepfakeFile(file);
-            }
-        }
+            if (deepfakeFile) URL.revokeObjectURL(getFileUrl(deepfakeFile) as string);
+              setDeepfakeFile(file);
+      }
     }
+
+    //const handleFileChange = (event: ChangeEvent<HTMLInputElement>, type: 'original' | 'deepfake') => {
+    //    if (event.target.files && event.target.files.length > 0) {
+    //       const file = event.target.files[0];
+    //        
+    //        const MAX_SIZE = 1048576 * 3;
+    //        if (file.size > MAX_SIZE) {
+    //            alert(`파일 크기가 3MB를 초과합니다. (${(file.size / 1048576).toFixed(2)} MB). 다른 파일을 선택해주세요.`);
+    //            if (event.target) {
+    //                event.target.value = '';
+     //           }
+     //           return;
+    //        }
+
+    //        if (type === 'original'){
+    //            if (originFile) URL.revokeObjectURL(getFileUrl(originFile) as string);
+    //            setOriginFile(file);
+    //        } else if (type === 'deepfake'){
+    //            if (deepfakeFile) URL.revokeObjectURL(getFileUrl(deepfakeFile) as string);
+    //            setDeepfakeFile(file);
+    //        }
+    //    }
+    //}
 
     const renderPreview = (file: File | null) => {
         if (!file) return null;
@@ -106,7 +132,7 @@ const StyledMainPage = () => {
         </S.SubTitle>
 
         <S.MainBody>
-        <S.LeftImageBox hasFile={!!originFile} onClick={() => handleUploadClick('original')}>
+        {/* <S.LeftImageBox hasFile={!!originFile} onClick={() => handleUploadClick('original')}>
                 <input
                     type="file"
                     ref={originalInputRef}
@@ -157,7 +183,35 @@ const StyledMainPage = () => {
                         <S.UploadButton onClick={(e) => { e.stopPropagation(); handleUploadClick('deepfake'); }}>Re-upload</S.UploadButton>
                     </S.FileInfo>
                 )}
-            </S.RightImageBox>
+            </S.RightImageBox> */}
+
+            <S.MainImageBox hasFile={!!deepfakeFile} onClick={() => handleUploadClick()}>
+                <input
+                    type="file"
+                    ref={deepfakeInputRef}
+                    onChange={(e) => handleFileChange(e)}
+                    accept="image/*,video/*"
+                    style={{ display: 'none' }}
+                />
+                
+                {renderPreview(deepfakeFile)}
+                
+                {!deepfakeFile && (
+                    <>
+                        <h1>Tab to upload</h1>
+                        <p>Upload a Deepfake video or image to check for deepfakes</p>
+                        <S.UploadButton>Upload</S.UploadButton>
+                    </>
+                )}
+                {deepfakeFile && (
+                    <S.FileInfo>
+                        <h1>{deepfakeFile.name}</h1>
+                        <p>File Size: {(deepfakeFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                        <S.UploadButton onClick={(e) => { e.stopPropagation(); handleUploadClick(); }}>Re-upload</S.UploadButton>
+                    </S.FileInfo>
+                )}
+
+            </S.MainImageBox>
         </S.MainBody>
         <S.CompareButton onClick = {handleMove}>
             Compare Started
@@ -216,6 +270,37 @@ MainHeader: styled.div`
     gap: 20px;
     flex-grow: 1;
     margin-bottom: 20px;
+  `,
+
+  MainImageBox: styled.div<{hasFile: boolean}>`
+    border: 2px dashed ${props => props.hasFile ? 'transparent' : '#ccc'};
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: ${props => props.hasFile ? 'space-between' : 'center'};
+    flex-basis: 90%;
+    height: 35vh;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    background-color: ${props => props.hasFile ? '#f8f8f8' : 'white'};
+
+
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: #555;
+      display: ${props => props.hasFile ? 'none' : 'block'};
+    }
+
+    p {
+      font-size: 0.9em;
+      color: #777;
+      margin-bottom: 20px;
+      display: ${props => props.hasFile ? 'none' : 'block'};
+    }
   `,
   
   LeftImageBox: styled.div<{hasFile: boolean}>`
