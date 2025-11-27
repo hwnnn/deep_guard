@@ -1,4 +1,4 @@
-from models.deepfake_detection import CNNDeepfakeDetector
+from app.models import CNNDeepfakeDetector
 from typing import Dict, Any
 
 
