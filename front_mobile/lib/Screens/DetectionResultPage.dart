@@ -48,74 +48,65 @@ class DetectionResultPage extends StatelessWidget {
 
       backgroundColor: Colors.white,
 
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+      body: Container(
+        alignment: Alignment.center,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
 
-            // ---------- 결과 텍스트 ----------
-            const SizedBox(height: 10),
-            Text(
-              resultText,
-              style: const TextStyle(
-                fontSize: 38,
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 5),
-
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey[600],
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Text(
-                "Confidence: ${(confidence * 100).toStringAsFixed(1)}%",
+              // ---------- 결과 텍스트 ----------
+              const SizedBox(height: 10),
+              Text(
+                resultText,
                 style: const TextStyle(
-                  fontSize: 26,
-                  color: Colors.greenAccent,
+                  fontSize: 38,
+                  color: Colors.red,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // ---------- 이미지 2개 박스 ----------
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ImageBox(
-                  title: "Orig Image",
-                  description: "",
-                  uploadedImage: const AssetImage("assets/sample_orig.png"),
-                  onUploadTap: () {},
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[600],
+                  borderRadius: BorderRadius.circular(25),
                 ),
-                ImageBox(
-                  title: "DF Image",
-                  description: "",
-                  uploadedImage: const AssetImage("assets/sample_df.png"),
-                  onUploadTap: () {},
+                child: Text(
+                  "Confidence: ${(confidence * 100).toStringAsFixed(1)}%",
+                  style: const TextStyle(
+                    fontSize: 26,
+                    color: Colors.greenAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ],
-            ),
+              ),
 
-            const Spacer(),
+              const SizedBox(height: 40),
 
-            // ---------- 아래 화살표 ----------
-            const Icon(Icons.keyboard_arrow_down,
-              size: 32,
-              color: Colors.deepPurple,
-            ),
+              ImageBox(
+                title: "Image",
+                description: "",
+                uploadedImage: const AssetImage("assets/sample_orig.png"),
+                onUploadTap: () {},
+              ),
 
-            const SizedBox(height: 8),
-          ],
+              const Spacer(),
+
+              // ---------- 아래 화살표 ----------
+              const Icon(Icons.keyboard_arrow_down,
+                size: 32,
+                color: Colors.deepPurple,
+              ),
+
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }

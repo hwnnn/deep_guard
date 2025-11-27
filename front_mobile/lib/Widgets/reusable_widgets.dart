@@ -71,7 +71,7 @@ class ImageBox extends StatelessWidget {
     final bool hasImage = uploadedImage != null;
 
     return Container(
-      width: 130,
+      width: 250,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12, width: 2, style: BorderStyle.solid),
