@@ -1,3 +1,5 @@
 Map<String, String> ENDPOINTS = {
-  'face-swap' : '/api/auth/face-swap/',
+  'upload' : '/api/inference/upload',
+  'lookUpResult' : '/api/inference/result',
+  'lookUpStatistic' : '/api/inference/statistics'
 };
