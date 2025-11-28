@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 서버 약관 동의 플래그 저장 여부에 따라 랜딩페이지 설정
     return MaterialApp(
       title: 'DeepGuard',
       debugShowCheckedModeBanner: false,
