@@ -1,18 +1,22 @@
+import 'package:deep_guard_fe/Services/request_to_server.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../Bars/header_footer.dart';
+import '../Routers/endpoint.dart';
 import '../Routers/routing_point.dart';
 import '../Bars/navigation.dart';
 import '../Widgets/elevated_button.dart';
 import '../Widgets/reusable_widgets.dart';
+import '../Services/request_to_server.dart';
 
 class DetectionResultPage extends StatelessWidget {
-  final String resultText; // ex: "DeepFake"
-  final double confidence; // ex: 0.95
+  final Map<String, dynamic> result;
+  final XFile uploadedImage;
 
-  const DetectionResultPage({
+  DetectionResultPage({
     super.key,
-    required this.resultText,
-    required this.confidence,
+    required this.result,
+    required this.uploadedImage
   });
 
   void _toUploadPage(BuildContext context){
@@ -25,6 +29,7 @@ class DetectionResultPage extends StatelessWidget {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,10 +64,10 @@ class DetectionResultPage extends StatelessWidget {
               // ---------- 결과 텍스트 ----------
               const SizedBox(height: 10),
               Text(
-                resultText,
-                style: const TextStyle(
+                this.result['detection_result']['is_fake'] ? "DeepFake" : "Real Img",
+                style: TextStyle(
                   fontSize: 38,
-                  color: Colors.red,
+                  color: this.result['detection_result']['is_fake'] ? Colors.red : Colors.green,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -76,7 +81,7 @@ class DetectionResultPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: Text(
-                  "Confidence: ${(confidence * 100).toStringAsFixed(1)}%",
+                  "Confidence: ${(this.result['detection_result']['confidence'] * 100).toStringAsFixed(1)}%",
                   style: const TextStyle(
                     fontSize: 26,
                     color: Colors.greenAccent,
@@ -90,7 +95,7 @@ class DetectionResultPage extends StatelessWidget {
               ImageBox(
                 title: "Image",
                 description: "",
-                uploadedImage: const AssetImage("assets/sample_orig.png"),
+                uploadedImage: this.uploadedImage,
                 onUploadTap: () {},
               ),
 
