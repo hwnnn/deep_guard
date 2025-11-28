@@ -3,11 +3,11 @@ import styled from 'styled-components';
 import successImg from '../assets/success.svg';
 import failImg from '../assets/fail.svg';
 import { useNavigate } from 'react-router-dom';
-import type { DetectionResponse } from '../types/types';
+import type { DetectionResponse, ResultResponse } from '../types/types';
 
 type AnalResultPageProps = {
     error: string | null;
-    result: DetectionResponse | null;
+    result: ResultResponse| null;
     onRetry: () => void;
 }
 
