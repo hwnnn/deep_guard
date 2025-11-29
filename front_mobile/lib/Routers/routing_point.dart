@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 // 제작 페이지 등록
 import '../Screens/LandingPage.dart';
@@ -6,6 +7,7 @@ import '../Screens/TermsAgreementPage.dart';
 import '../Screens/UploadPage.dart';
 import '../Screens/DetectionResultPage.dart';
 import '../Screens/DetectingProcessPage.dart';
+
 class RoutingPoint {
   // 앱 전체 route 이름 관리
   static const String landing = '/';
@@ -17,7 +19,14 @@ class RoutingPoint {
   static const String detectionresult = '/result';
 
   // route → 화면 위젯 빌더 매핑
-  static Route<dynamic> generateRoute({required RouteSettings settings}) {
+  static Route<dynamic> generateRoute(
+      {
+        required RouteSettings settings,
+        final XFile? uploadedImage,
+        final Map<String, dynamic>? result,
+      })
+  {
+
     switch (settings.name) {
       case landing:
         return MaterialPageRoute(
@@ -36,24 +45,29 @@ class RoutingPoint {
 
       case detecting:
         return MaterialPageRoute(
-          builder: (_) => const DetectingPage(),
+          builder: (_) => DetectingPage(uploadedImage: uploadedImage),
         );
 
       case detectionsuccessed:
         return MaterialPageRoute(
-          builder: (_) => const DetectionSuccessedPage(),
+          builder: (_) => DetectionSuccessedPage(
+            uploadedImage: uploadedImage!,
+            result: result!
+          ),
         );
 
       case detectionfailed:
         return MaterialPageRoute(
-          builder: (_) => const DetectionFailedPage(),
+          builder: (_) => DetectionFailedPage(
+            uploadedImage: uploadedImage!,
+          ),
         );
-
+      // 더미 값, 수정 필요
       case detectionresult:
         return MaterialPageRoute(
-          builder: (_) => const DetectionResultPage(
-              resultText: 'Deepfake',
-              confidence: 0.95
+          builder: (_) => DetectionResultPage(
+            result: result!,
+            uploadedImage: uploadedImage!,
           ),
         );
       default:

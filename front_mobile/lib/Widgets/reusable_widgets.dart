@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// 1. TitleSection(1, 2번 UI용)
 /// 2. ImageBox
@@ -55,7 +58,7 @@ class TitleSection extends StatelessWidget {
 class ImageBox extends StatelessWidget {
   final String title;                   // Orig Image / DF Image / Tap to upload
   final String description;             // 업로드 전 안내문구
-  final ImageProvider? uploadedImage;   // 업로드된 이미지(없으면 null)
+  final XFile? uploadedImage;   // 업로드된 이미지(없으면 null)
   final VoidCallback onUploadTap;       // 업로드 버튼 콜백
 
   const ImageBox({
@@ -69,9 +72,8 @@ class ImageBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool hasImage = uploadedImage != null;
-
     return Container(
-      width: 130,
+      width: 250,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black12, width: 2, style: BorderStyle.solid),
@@ -96,7 +98,7 @@ class ImageBox extends StatelessWidget {
               ? ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image(
-                image: uploadedImage!,
+                image: Image.file(File(uploadedImage!.path)).image,
                 width: 130,
                 height: 180,
                 fit: BoxFit.cover,
