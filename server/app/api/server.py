@@ -68,21 +68,24 @@ async def upload_file_for_inference(
         
         # 딥페이크 탐지 수행
         #result = detector.detect(image_bytes)
-        is_fake, prob, result_img = detector.detect(image_bytes)
+        is_fake, prob, orig_img, result_img = detector.detect(image_bytes)
 
         if is_fake is None:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail = " No face detected in the image"
             )
-        img_base64 = None
-        #Numpy -> PIL IMAGE
-        pil_img = Image.fromarray(result_img)
-        # 메모리 버퍼에 저장
-        buffered = io.BytesIO()
-        # 용량 줄이기 위해 JPEG
-        pil_img.save(buffered, format="JPEG")
-        img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+        def convert_to_base64(img_np):
+            if img_np is None: return None
+            pil_img = Image.fromarray(img_np)
+            buffered = io.BytesIO()
+            pil_img.save(buffered, format="JPEG") # JPEG로 압축
+            return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        # Grad-CAM 결과
+        result_img_base64 = convert_to_base64(result_img)
+        # 원본 크롭 얼굴
+        orig_img_base64 = convert_to_base64(orig_img)
 
 
         # 고유 task_id 생성
@@ -98,7 +101,8 @@ async def upload_file_for_inference(
                 "is_fake": is_fake,
                 "confidence": float(prob),
                 "verdict": "TRUE" if is_fake else "FALSE",
-                "result_img": img_base64
+                "orin_img" : result_img_base64,
+                "result_img": orig_img_base64
             }
             # "detection_result": {
             #     "is_fake": result["is_fake"],

@@ -1,82 +1,32 @@
-import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import type { DetectionResponse } from '../types/types';
-import TempImg from '/Users/chajaesig/deep_guard/front_web/src/assets/react.svg'
+import type { ResultResponse } from '../types/types';
 const StyledResultPage = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
 
-    const state = location.state as { resultData: DetectionResponse} | null;
-
+    const state = location.state as { resultData: ResultResponse} | null;
     const result = state?.resultData;
 
-    const [originMedia, setOriginMedia] = useState<string | null>(null);
-    const [deepfakeInputRef, setDeepfakeInputRef] = useState<string | null>(null);
 
-    const getMediaType = (url: string) => {
-        if (!url) return null;
-        if (url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i)) return "image";
-        if (url.match(/\.(mp4|webm|mov|avi)$/i)) return "video";
-        return null;
-    };
-
-    const renderPreview = (mediaUrl: string | null) => {
-        if (!mediaUrl) return null;
-        const type = getMediaType(mediaUrl);
-
-        if (type === "image") {
-            return <S.PreviewImage src={mediaUrl} alt="preview" />;
-        }
-        if (type === "video") {
-            return (
-                <S.PreviewVideo controls muted>
-                    <source src={mediaUrl} />
-                </S.PreviewVideo>
-            );
-        }
-        return null;
-    };
+    const orig_image64 = `data:image/jpeg;base64,${result?.detection_result.orin_img}`
+    const result_image64 = `data:image/jpeg;base64,${result?.detection_result.result_img}`
 
     return (
         <S.MainContainer>
             <S.Title>DeepFake</S.Title>
-            <S.SubTitle>Confidence: {result ? result?.detection_result.confidence : '-' }</S.SubTitle>
+            <S.SubTitle>
+                <p>{result?.detection_result.is_fake ? "딥페이크가 맞습니다" : "딥페이크가 아닙니다"}</p>
+                <p>Confidence: {result ? result?.detection_result.confidence : '-' }</p>
+                <p>판정 : {result?.detection_result.verdict}</p>
+
+            </S.SubTitle>
 
             <S.MainBody>
-                {/* <S.LeftImageBox hasFile={!!originMedia}>
-                    {originMedia ? (
-                        <>
-                            {renderPreview(originMedia)}
-                            <S.FileInfo>
-                                <h1>Original Media</h1>
-                                <S.UploadButton >Reload</S.UploadButton>
-                            </S.FileInfo>
-                        </>
-                    ) : (
-                        <h1>No Media</h1>
-                    )}
-                </S.LeftImageBox>
-
-                <S.RightImageBox hasFile={!!deepfakeMedia}>
-                    {deepfakeMedia ? (
-                        <>
-                            {renderPreview(deepfakeMedia)}
-                            <S.FileInfo>
-                                <h1>Deepfake Media</h1>
-                                <S.UploadButton >Reload</S.UploadButton>
-                            </S.FileInfo>
-                        </>
-                    ) : (
-                        <h1>No Media</h1>
-                    )}
-
-                
-                </S.RightImageBox> */}
-
                 <S.MainImageBox>
-                    <S.PreviewImage src={TempImg} alt="TempImg"/>
+                    <S.PreviewImage src={orig_image64} alt="Orin_Img"/>
+                    <S.PreviewImage src={result_image64} alt="Result_img"/>
                 </S.MainImageBox>
             </S.MainBody>
 
@@ -85,12 +35,6 @@ const StyledResultPage = () => {
 
                 {result ? (
                     <>
-                    <p>가짜인가? : {result.detection_result.is_fake}</p>
-                    <p>정확도 : {result.detection_result.confidence}</p>
-                    <p>진짜일 확률 : {result.detection_result.real_probability}</p>
-                    <p>가짜일 학률 : {result.detection_result.fake_probability}</p>
-                    <p>판정 : {result.detection_result.verdict}</p>
-                    <p></p>
                     </>
                 ) : (
                     <p>데이터 없음</p>

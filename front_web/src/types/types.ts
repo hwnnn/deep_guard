@@ -24,22 +24,8 @@ export type ResultResponse = {
     detection_result: {
         is_fake: boolean;
         confidence: number;
-        fake_probability: number;
-        real_probability: number;
         verdict: string;
-    };
-    analysis: {
-        ensemble_method: string;
-        models_used: number;
-        fake_votes: number;
-        model_results: {
-            [modelName: string]: {
-                fake_probability: number;
-                confidence: number;
-            };
-        };
-    };
-    model_info: {
-        name: string;
+        orin_img: string;
+        result_img: string;
     };
 };
