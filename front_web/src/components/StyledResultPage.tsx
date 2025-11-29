@@ -25,21 +25,56 @@ const StyledResultPage = () => {
 
             <S.MainBody>
                 <S.MainImageBox>
+                    <S.ResultRow>
+                        <h3>Origianl</h3>
                     <S.PreviewImage src={orig_image64} alt="Orin_Img"/>
+                    </S.ResultRow>
+                    <S.ResultRow>
+                        <h4>Result</h4>
                     <S.PreviewImage src={result_image64} alt="Result_img"/>
+                    </S.ResultRow>
                 </S.MainImageBox>
             </S.MainBody>
 
-            <S.ResultSection>
-                <h2>결과 분석</h2>
+        <S.ResultSection>
+            <h2>결과 분석</h2>
+            {result ? (
+                <>
+                    <h3>딥페이크 이미지의 특징</h3>
+                    
+                    <h4>물리적 아티팩트</h4>
+                    <ul>
+                        <li>얼굴 경계 블렌딩 불완전 (목/귀 연결부)</li>
+                        <li>조명 불일치 (얼굴 vs 배경)</li>
+                        <li>피부 텍스처 과도한 스무딩</li>
+                    </ul>
 
-                {result ? (
-                    <>
-                    </>
-                ) : (
-                    <p>데이터 없음</p>
-                )}
-            </S.ResultSection>
+                    <h4>생리학적 비정상</h4>
+                    <ul>
+                        <li>눈 깜빡임 부족/부자연스러움</li>
+                        <li>치아 형태 왜곡</li>
+                        <li>입술 동기화 오류 (립싱크)</li>
+                    </ul>
+
+                    <h4>주파수 특성</h4>
+                    <ul>
+                        <li>고주파 디테일 손실 (GAN 생성 특성)</li>
+                        <li>색상 채널 간 불일치</li>
+                        <li>압축 아티팩트 패턴 차이</li>
+                    </ul>
+
+                    <h4>모델이 주목하는 영역</h4>
+                    <ul>
+                        <li>입 주변 (립싱크 오류)</li>
+                        <li>눈/눈썹 (표정 불일치)</li>
+                        <li>얼굴 경계 (블렌딩 실패)</li>
+                        <li>치아/혀 (생성 어려운 부위)</li>
+                    </ul>
+                </>
+            ) : (
+                <p>데이터 없음</p>
+            )}
+        </S.ResultSection>
 
         </S.MainContainer>
     );
@@ -79,7 +114,7 @@ const S = {
         border-radius: 10px;
         padding: 20px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         flex-basis: 70%;
@@ -88,6 +123,7 @@ const S = {
         overflow: hidden;
         position: relative;
         background-color: white;
+        gap: 10vw;
     
     
         h1 {
@@ -207,6 +243,23 @@ const S = {
             color: #555;
         }
     `,
+
+    ResultRow: styled.div`
+        display: flex;
+        flex-direction: column;
+
+    h3 {
+        color: blue;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    h4 {
+        color: red;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    `
 };
 
 export default StyledResultPage;
