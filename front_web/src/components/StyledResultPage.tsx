@@ -1,101 +1,80 @@
-import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import type { DetectionResponse } from '../types/types';
-import TempImg from '/Users/chajaesig/deep_guard/front_web/src/assets/react.svg'
+import type { ResultResponse } from '../types/types';
 const StyledResultPage = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
 
-    const state = location.state as { resultData: DetectionResponse} | null;
-
+    const state = location.state as { resultData: ResultResponse} | null;
     const result = state?.resultData;
 
-    const [originMedia, setOriginMedia] = useState<string | null>(null);
-    const [deepfakeInputRef, setDeepfakeInputRef] = useState<string | null>(null);
 
-    const getMediaType = (url: string) => {
-        if (!url) return null;
-        if (url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i)) return "image";
-        if (url.match(/\.(mp4|webm|mov|avi)$/i)) return "video";
-        return null;
-    };
-
-    const renderPreview = (mediaUrl: string | null) => {
-        if (!mediaUrl) return null;
-        const type = getMediaType(mediaUrl);
-
-        if (type === "image") {
-            return <S.PreviewImage src={mediaUrl} alt="preview" />;
-        }
-        if (type === "video") {
-            return (
-                <S.PreviewVideo controls muted>
-                    <source src={mediaUrl} />
-                </S.PreviewVideo>
-            );
-        }
-        return null;
-    };
+    const orig_image64 = `data:image/jpeg;base64,${result?.detection_result.orin_img}`
+    const result_image64 = `data:image/jpeg;base64,${result?.detection_result.result_img}`
 
     return (
         <S.MainContainer>
             <S.Title>DeepFake</S.Title>
-            <S.SubTitle>Confidence: {result ? result?.detection_result.confidence : '-' }</S.SubTitle>
+            <S.SubTitle>
+                <p>{result?.detection_result.is_fake ? "딥페이크가 맞습니다" : "딥페이크가 아닙니다"}</p>
+                <p>Confidence: {result ? result?.detection_result.confidence : '-' }</p>
+                <p>판정 : {result?.detection_result.verdict}</p>
+
+            </S.SubTitle>
 
             <S.MainBody>
-                {/* <S.LeftImageBox hasFile={!!originMedia}>
-                    {originMedia ? (
-                        <>
-                            {renderPreview(originMedia)}
-                            <S.FileInfo>
-                                <h1>Original Media</h1>
-                                <S.UploadButton >Reload</S.UploadButton>
-                            </S.FileInfo>
-                        </>
-                    ) : (
-                        <h1>No Media</h1>
-                    )}
-                </S.LeftImageBox>
-
-                <S.RightImageBox hasFile={!!deepfakeMedia}>
-                    {deepfakeMedia ? (
-                        <>
-                            {renderPreview(deepfakeMedia)}
-                            <S.FileInfo>
-                                <h1>Deepfake Media</h1>
-                                <S.UploadButton >Reload</S.UploadButton>
-                            </S.FileInfo>
-                        </>
-                    ) : (
-                        <h1>No Media</h1>
-                    )}
-
-                
-                </S.RightImageBox> */}
-
                 <S.MainImageBox>
-                    <S.PreviewImage src={TempImg} alt="TempImg"/>
+                    <S.ResultRow>
+                        <h3>Origianl</h3>
+                    <S.PreviewImage src={orig_image64} alt="Orin_Img"/>
+                    </S.ResultRow>
+                    <S.ResultRow>
+                        <h4>Result</h4>
+                    <S.PreviewImage src={result_image64} alt="Result_img"/>
+                    </S.ResultRow>
                 </S.MainImageBox>
             </S.MainBody>
 
-            <S.ResultSection>
-                <h2>결과 분석</h2>
+        <S.ResultSection>
+            <h2>결과 분석</h2>
+            {result ? (
+                <>
+                    <h3>딥페이크 이미지의 특징</h3>
+                    
+                    <h4>물리적 아티팩트</h4>
+                    <ul>
+                        <li>얼굴 경계 블렌딩 불완전 (목/귀 연결부)</li>
+                        <li>조명 불일치 (얼굴 vs 배경)</li>
+                        <li>피부 텍스처 과도한 스무딩</li>
+                    </ul>
 
-                {result ? (
-                    <>
-                    <p>가짜인가? : {result.detection_result.is_fake}</p>
-                    <p>정확도 : {result.detection_result.confidence}</p>
-                    <p>진짜일 확률 : {result.detection_result.real_probability}</p>
-                    <p>가짜일 학률 : {result.detection_result.fake_probability}</p>
-                    <p>판정 : {result.detection_result.verdict}</p>
-                    <p></p>
-                    </>
-                ) : (
-                    <p>데이터 없음</p>
-                )}
-            </S.ResultSection>
+                    <h4>생리학적 비정상</h4>
+                    <ul>
+                        <li>눈 깜빡임 부족/부자연스러움</li>
+                        <li>치아 형태 왜곡</li>
+                        <li>입술 동기화 오류 (립싱크)</li>
+                    </ul>
+
+                    <h4>주파수 특성</h4>
+                    <ul>
+                        <li>고주파 디테일 손실 (GAN 생성 특성)</li>
+                        <li>색상 채널 간 불일치</li>
+                        <li>압축 아티팩트 패턴 차이</li>
+                    </ul>
+
+                    <h4>모델이 주목하는 영역</h4>
+                    <ul>
+                        <li>입 주변 (립싱크 오류)</li>
+                        <li>눈/눈썹 (표정 불일치)</li>
+                        <li>얼굴 경계 (블렌딩 실패)</li>
+                        <li>치아/혀 (생성 어려운 부위)</li>
+                    </ul>
+                </>
+            ) : (
+                <p>데이터 없음</p>
+            )}
+        </S.ResultSection>
 
         </S.MainContainer>
     );
@@ -135,7 +114,7 @@ const S = {
         border-radius: 10px;
         padding: 20px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         flex-basis: 70%;
@@ -144,6 +123,7 @@ const S = {
         overflow: hidden;
         position: relative;
         background-color: white;
+        gap: 10vw;
     
     
         h1 {
@@ -263,6 +243,23 @@ const S = {
             color: #555;
         }
     `,
+
+    ResultRow: styled.div`
+        display: flex;
+        flex-direction: column;
+
+    h3 {
+        color: blue;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    h4 {
+        color: red;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    `
 };
 
 export default StyledResultPage;
