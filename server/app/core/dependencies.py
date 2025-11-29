@@ -1,10 +1,15 @@
 from app.core.config import get_settings
 from app.db.database import db, DatabaseManager
 from app.models import EnsembleDetector
+from functools import lru_cache
+from app.models.DeepfakeBench_main.deepfake_detector import DeepfakeDetector
 
-deepfake_detector = EnsembleDetector()
+WEIGHTS_PATH = "app/models/DeepfakeBench_main/training/pretrained/xception_best.pth"
+#deepfake_detector = EnsembleDetector()
 
+@lru_cache()
 def get_deepfake_detector():
+    deepfake_detector = DeepfakeDetector(weights_path = WEIGHTS_PATH, device='cpu')
     return deepfake_detector
 
 def get_app_settings():

@@ -3,7 +3,7 @@ import type { UploadResponse, ResultResponse} from '../types/types';
 
 export const api = axios.create({
     baseURL: 'http://localhost:8000',
-    timeout: 10000,
+    timeout: 60000,
 });
 
 

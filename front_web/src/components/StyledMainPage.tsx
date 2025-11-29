@@ -59,9 +59,9 @@ const StyledMainPage = () => {
     const handleFileChange = (event:ChangeEvent<HTMLInputElement>) => {
             if (event.target.files && event.target.files.length > 0) {
               const file = event.target.files[0];
-              const MAX_SIZE = 1048576 * 3;
+              const MAX_SIZE = 1048576 * 10;
             if (file.size > MAX_SIZE) {
-                alert(`파일 크기가 3MB를 초과합니다. (${(file.size / 1048576).toFixed(2)} MB). 다른 파일을 선택해주세요.`);
+                alert(`파일 크기가 10MB를 초과합니다. (${(file.size / 1048576).toFixed(2)} MB). 다른 파일을 선택해주세요.`);
                 if (event.target) {
                     event.target.value = '';
                 }

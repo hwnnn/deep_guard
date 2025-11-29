@@ -5,6 +5,12 @@ from app.db import DatabaseManager
 import uuid
 from datetime import datetime
 
+# 추가
+import base64
+import io
+from PIL import Image
+import numpy as np
+
 router = APIRouter(prefix="/inference", tags=["inference"])
 
 
@@ -61,8 +67,24 @@ async def upload_file_for_inference(
             )
         
         # 딥페이크 탐지 수행
-        result = detector.detect(image_bytes)
-        
+        #result = detector.detect(image_bytes)
+        is_fake, prob, result_img = detector.detect(image_bytes)
+
+        if is_fake is None:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail = " No face detected in the image"
+            )
+        img_base64 = None
+        #Numpy -> PIL IMAGE
+        pil_img = Image.fromarray(result_img)
+        # 메모리 버퍼에 저장
+        buffered = io.BytesIO()
+        # 용량 줄이기 위해 JPEG
+        pil_img.save(buffered, format="JPEG")
+        img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+
         # 고유 task_id 생성
         task_id = str(uuid.uuid4())
         
@@ -73,18 +95,24 @@ async def upload_file_for_inference(
             "file_size": len(image_bytes),
             "timestamp": datetime.utcnow().isoformat(),
             "detection_result": {
-                "is_fake": result["is_fake"],
-                "confidence": result["confidence"],
-                "fake_probability": result["fake_probability"],
-                "real_probability": result["real_probability"],
-                "verdict": "🚨 DEEPFAKE DETECTED" if result["is_fake"] else "✓ AUTHENTIC IMAGE"
-            },
-            "suspicious_regions": result["suspicious_regions"],
-            "analysis": result.get("analysis", {}),
-            "model_info": {
-                "name": result.get("model", "ensemble"),
-                "type": "Ensemble Detector (CNN + DeepFace + FaceRecognition)"
+                "is_fake": is_fake,
+                "confidence": float(prob),
+                "verdict": "TRUE" if is_fake else "FALSE",
+                "result_img": img_base64
             }
+            # "detection_result": {
+            #     "is_fake": result["is_fake"],
+            #     "confidence": result["confidence"],
+            #     "fake_probability": result["fake_probability"],
+            #     "real_probability": result["real_probability"],
+            #     "verdict": "🚨 DEEPFAKE DETECTED" if result["is_fake"] else "✓ AUTHENTIC IMAGE"
+            # },
+            # "suspicious_regions": result["suspicious_regions"],
+            # "analysis": result.get("analysis", {}),
+            # "model_info": {
+            #     "name": result.get("model", "ensemble"),
+            #     "type": "Ensemble Detector (CNN + DeepFace + FaceRecognition)"
+            # }
         }
         
         # Redis (cache) + MongoDB (persistent) 저장
