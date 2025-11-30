@@ -5,3 +5,6 @@
 *.pth
 *.pt
 *.dat
+
+# Exception: Allow xception_best.pth for inference
+!training/pretrained/xception_best.pth
