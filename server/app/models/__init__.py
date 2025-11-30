@@ -1,15 +1,8 @@
-from .base import DeepfakeDetectorModel
-from .cnn_detector import CNNDeepfakeDetector
-from .deepface_detector import DeepFaceDetector
-from .face_recognition_detector import FaceRecognitionDetector
-from .ensemble_detector import EnsembleDetector
-from .insightface_detector import InsightFaceDetector
+# DeepfakeBench Xception model is now used for inference
+# Previous detection models (CNN, DeepFace, etc.) have been removed
+
+from .DeepfakeBench_main.deepfake_detector import DeepfakeDetector
 
 __all__ = [
-    "DeepfakeDetectorModel",
-    "CNNDeepfakeDetector",
-    "DeepFaceDetector",
-    "FaceRecognitionDetector",
-    "EnsembleDetector",
-    "InsightFaceDetector"
+    "DeepfakeDetector"
 ]
