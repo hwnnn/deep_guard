@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -60,12 +61,14 @@ class ImageBox extends StatelessWidget {
   final String description;             // 업로드 전 안내문구
   final XFile? uploadedImage;   // 업로드된 이미지(없으면 null)
   final VoidCallback onUploadTap;       // 업로드 버튼 콜백
+  final Uint8List? processedImage;
 
   const ImageBox({
     super.key,
     required this.title,
     required this.description,
     this.uploadedImage,
+    this.processedImage,
     required this.onUploadTap,
   });
 
@@ -97,12 +100,20 @@ class ImageBox extends StatelessWidget {
           hasImage
               ? ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image(
-                image: Image.file(File(uploadedImage!.path)).image,
-                width: 130,
-                height: 180,
-                fit: BoxFit.cover,
-              ))
+              child: processedImage == null ?
+                Image(
+                  image: Image.file(File(uploadedImage!.path)).image,
+                  width: 130,
+                  height: 180,
+                  fit: BoxFit.cover,
+                )
+                  :
+                Image.memory(
+                    processedImage!,
+                    width: 170,
+                    height: 240,
+                )
+              )
               : Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
