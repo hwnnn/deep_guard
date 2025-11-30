@@ -147,26 +147,49 @@ class DeepfakeDetector:
         return Image.fromarray(cv2.cvtColor(cropped_img_bgr, cv2.COLOR_BGR2RGB))
 
     def _apply_cam_on_image(self, img, mask, threshold=0.3, image_weight=0.5):
-        mask_filtered = np.where(mask > threshold, mask, 0)
+        """
+        빨간색 + 투명도로 GradCAM 시각화
+        mask 값이 높을수록 불투명한 빨간색, 낮을수록 투명
+        """
+        # ===== 이전 코드 (JET 컬러맵 사용) =====
+        # mask_filtered = np.where(mask > threshold, mask, 0)
+        # heatmap = cv2.applyColorMap(np.uint8(255 * mask_filtered), cv2.COLORMAP_JET)
+        # heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
+        # heatmap = np.float32(heatmap) / 255
+        # if np.max(img) > 1:
+        #     raise Exception("The input image should np.float32 in the range [0, 1]")
+        # if image_weight < 0 or image_weight > 1:
+        #     raise Exception(f"image_weight should be in the range [0, 1]. Got: {image_weight}")
+        # binary_mask = mask > threshold
+        # binary_mask_3d = np.stack([binary_mask, binary_mask, binary_mask], axis=-1)
+        # cam = np.where(
+        #     binary_mask_3d,
+        #     (1 - image_weight) * heatmap + image_weight * img,
+        #     img
+        # )
+        # cam = cam / np.max(cam)
+        # return np.uint8(255 * cam)
         
-        heatmap = cv2.applyColorMap(np.uint8(255 * mask_filtered), cv2.COLORMAP_JET)
-        heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
-        heatmap = np.float32(heatmap) / 255
-
+        # ===== 새로운 코드 (빨간색 + 투명도) =====
         if np.max(img) > 1:
             raise Exception("The input image should np.float32 in the range [0, 1]")
 
-        if image_weight < 0 or image_weight > 1:
-            raise Exception(f"image_weight should be in the range [0, 1]. Got: {image_weight}")
-
-        binary_mask = mask > threshold
-        binary_mask_3d = np.stack([binary_mask, binary_mask, binary_mask], axis=-1)
+        # 원본 이미지를 uint8로 변환
+        img_uint8 = np.uint8(255 * img)
         
-        cam = np.where(
-            binary_mask_3d,
-            (1 - image_weight) * heatmap + image_weight * img,
-            img
-        )
+        # 빨간색 오버레이 생성 (RGB: 255, 0, 0)
+        red_overlay = np.zeros_like(img_uint8)
+        red_overlay[:, :, 0] = 255  # R 채널만 255
         
-        cam = cam / np.max(cam)
-        return np.uint8(255 * cam)
+        # mask를 투명도(alpha)로 사용 (0~1 범위)
+        # threshold 이하는 완전 투명, 이상은 mask 값에 비례한 투명도
+        alpha = np.where(mask > threshold, mask, 0)
+        alpha = np.clip(alpha, 0, 1)  # 0~1 범위로 클리핑
+        alpha = alpha * 0.5  # 투명도를 50%로 조정
+        alpha_3d = np.stack([alpha, alpha, alpha], axis=-1)
+        
+        # 빨간색 오버레이를 원본 이미지에 블렌딩
+        # alpha가 높을수록 빨간색이 진하게 표시됨
+        blended = (1 - alpha_3d) * img_uint8 + alpha_3d * red_overlay
+        
+        return np.uint8(blended)
