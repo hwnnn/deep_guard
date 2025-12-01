@@ -3,9 +3,9 @@
 > AI-Powered Deepfake Detection API with Hybrid Storage Architecture
 
 딥페이크 탐지를 위한 프로덕션 레벨 FastAPI 백엔드 서버입니다.  
-5가지 딥페이크 탐지 모델과 Redis + MongoDB 하이브리드 스토리지를 지원합니다.
+DeepfakeBench Xception 모델과 Redis + MongoDB 하이브리드 스토리지를 지원합니다.
 
-**📅 Last Updated**: 2025년 11월 25일  
+**📅 Last Updated**: 2025년 12월 1일  
 **🏗️ Architecture**: Functional Module Organization (core, db, models, inference, api)
 
 ## 📋 목차
@@ -20,12 +20,11 @@
 
 ## 🎯 핵심 기능
 
-### 1. 딥페이크 탐지 (5가지 모델)
-- **CNN Detector**: OpenCV 기반 초고속 탐지 (~50ms)
-- **DeepFace Detector**: 감정/나이/성별 분석 기반 탐지 (100% 신뢰도)
-- **Face Recognition Detector**: 68포인트 랜드마크 분석 (~210ms)
-- **InsightFace Detector**: 512D 임베딩 벡터 분석 (~130ms)
-- **Ensemble Detector** ⭐: 3가지 모델 결합으로 **89.4% 신뢰도** 달성
+### 1. 딥페이크 탐지
+- **DeepfakeBench Xception Model** ⭐: 최신 딥페이크 탐지 모델
+- **Grad-CAM 시각화**: 탐지 근거를 시각적으로 제공
+- **얼굴 검출 및 크롭**: 자동 얼굴 영역 추출
+- **사전 학습된 가중치**: `xception_best.pth` 사용
 
 ### 2. 하이브리드 스토리지 아키텍처
 - **Redis**: 24시간 TTL 캐시 (~10ms 응답 속도)
@@ -33,9 +32,9 @@
 - **In-Memory Fallback**: DB 없이도 작동하는 안정성
 
 ### 3. 비동기 추론 API
-- `POST /api/inference/upload`: 파일 업로드 → task_id 즉시 반환
-- `GET /api/inference/result/{task_id}`: 추론 결과 조회 (캐시 우선)
-- `GET /api/inference/statistics`: 실시간 통계 (전체/가짜/진짜 비율)
+- `POST /inference/upload`: 파일 업로드 → task_id 즉시 반환
+- `GET /inference/result/{task_id}`: 추론 결과 조회 (캐시 우선)
+- `GET /inference/statistics`: 실시간 통계 (전체/가짜/진짜 비율)
 
 ### 4. 프로덕션 레벨 기능
 - 🔒 CORS 설정 및 보안 헤더
@@ -58,20 +57,17 @@ server/
 │   ├── db/                        # 💾 데이터베이스 레이어
 │   │   └── database.py            # DatabaseManager (Redis + MongoDB + Fallback)
 │   ├── models/                    # 🤖 AI 탐지 모델
-│   │   ├── base.py                # BaseDeepfakeDetector 추상 클래스
-│   │   ├── cnn_detector.py        # CNN 기반 초고속 탐지
-│   │   ├── deepface_detector.py   # 감정/나이/성별 분석 탐지
-│   │   ├── face_recognition_detector.py  # 68포인트 랜드마크 탐지
-│   │   ├── insightface_detector.py       # 512D 임베딩 벡터 탐지
-│   │   └── ensemble_detector.py   # ⭐ 3가지 모델 앙상블 (89.4% 신뢰도)
+│   │   └── DeepfakeBench_main/    # DeepfakeBench Xception 모델
+│   │       ├── deepfake_detector.py  # 딥페이크 탐지기
+│   │       ├── crop.py            # 얼굴 크롭 전처리
+│   │       └── training/          # 모델 학습 코드 및 가중치
 │   ├── inference/                 # 🔬 비즈니스 로직
-│   │   ├── detection_service.py   # 딥페이크 탐지 서비스
-│   │   ├── api_inference.py       # API 추론 로직
-│   │   └── models_comparison_inference.py  # 모델 비교 분석
+│   │   └── detection_service.py   # 딥페이크 탐지 서비스
 │   └── api/                       # 🌐 API 엔드포인트
 │       └── server.py              # 메인 라우터 (upload, result, stats)
-├── dataset/                       # 📂 학습 데이터셋 (선택)
-├── tests/                         # 🧪 테스트 코드
+├── dataset/                       # 📂 테스트 데이터셋
+│   ├── images/                    # 테스트 이미지
+│   └── videos/                    # 테스트 비디오
 ├── .env                           # 🔐 환경 변수 설정 파일
 ├── docker-compose.yml             # 🐳 Redis + MongoDB 컨테이너
 ├── requirements.txt               # 📦 Python 의존성
@@ -98,15 +94,15 @@ server/
                      │
 ┌────────────────────▼─────────────────────────┐
 │       API Layer (app/api/server.py)          │
-│  - POST /api/inference/upload                │
-│  - GET  /api/inference/result/{id}           │
-│  - GET  /api/inference/statistics            │
+│  - POST /inference/upload                    │
+│  - GET  /inference/result/{id}               │
+│  - GET  /inference/statistics                │
 │  - GET  /health                              │
 └────────────────────┬─────────────────────────┘
                      │
 ┌────────────────────▼─────────────────────────┐
 │   Dependency Injection (app/core)            │
-│  - get_deepfake_detector() → EnsembleDetector│
+│  - get_deepfake_detector() → DeepfakeDetector│
 │  - get_db() → DatabaseManager                │
 │  - get_app_settings() → Settings             │
 └────────────────────┬─────────────────────────┘
@@ -118,18 +114,14 @@ server/
 │  - Redis (Cache)      │    │  (app/inference) │
 │  - MongoDB (Store)    │    │  - detection_    │
 │  - Fallback (RAM)     │    │    service       │
-└─────┬─────────────────┘    │  - api_inference │
-      │                      │  - comparison    │
-      │                      └─────────┬────────┘
+└─────┬─────────────────┘    └─────────┬────────┘
       │                                │
-      │                      ┌─────────▼────────┐
-      │                      │  Models (app/)   │
-      │                      │  - Ensemble ⭐   │
-      └──────────────────────┤  - CNN           │
-                             │  - DeepFace      │
-                             │  - FaceRec       │
-                             │  - InsightFace   │
-                             └──────────────────┘
+      │                      ┌─────────▼────────────┐
+      │                      │  Models (app/)       │
+      │                      │  - DeepfakeBench     │
+      └──────────────────────┤    Xception ⭐       │
+                             │  - Grad-CAM          │
+                             └──────────────────────┘
 ```
 
 ### 3-Tier 스토리지 전략
@@ -228,16 +220,16 @@ open http://localhost:8000/docs
 | Method | Endpoint | 설명 |
 |--------|----------|------|
 | `GET` | `/health` | 헬스체크 + DB 상태 |
-| `POST` | `/api/inference/upload` | 이미지 업로드 → task_id 반환 |
-| `GET` | `/api/inference/result/{task_id}` | 추론 결과 조회 (캐시 우선) |
-| `GET` | `/api/inference/statistics` | 전체 통계 (total, fake, real) |
+| `POST` | `/inference/upload` | 이미지 업로드 → task_id 반환 |
+| `GET` | `/inference/result/{task_id}` | 추론 결과 조회 (캐시 우선) |
+| `GET` | `/inference/statistics` | 전체 통계 (total, fake, real) |
 
 ### 1. 이미지 업로드
 
 ```bash
-curl -X POST "http://localhost:8000/api/inference/upload" \
+curl -X POST "http://localhost:8000/inference/upload" \
   -H "Content-Type: multipart/form-data" \
-  -F "file=@dataset/images/deepfake.jpeg"
+  -F "file=@dataset/images/test.jpg"
 ```
 
 **응답:**
@@ -252,35 +244,22 @@ curl -X POST "http://localhost:8000/api/inference/upload" \
 ### 2. 결과 조회
 
 ```bash
-curl "http://localhost:8000/api/inference/result/b64a8b5d-732b-4746-a575-fca7bd9047e6"
+curl "http://localhost:8000/inference/result/b64a8b5d-732b-4746-a575-fca7bd9047e6"
 ```
 
 **응답:**
 ```json
 {
   "task_id": "b64a8b5d-732b-4746-a575-fca7bd9047e6",
-  "filename": "deepfake.jpeg",
+  "filename": "test.jpg",
   "file_size": 7200,
-  "timestamp": "2025-11-24T05:11:06.645516",
+  "timestamp": "2025-12-01T05:11:06.645516",
   "detection_result": {
     "is_fake": false,
     "confidence": 0.8932,
-    "fake_probability": 0.1068,
-    "real_probability": 0.8932,
-    "verdict": "✓ AUTHENTIC IMAGE"
-  },
-  "analysis": {
-    "ensemble_method": "weighted_average_70_vote_30",
-    "models_used": 3,
-    "fake_votes": 0,
-    "model_results": {
-      "CNN": {"fake_probability": 0.4188, "confidence": 0.5812},
-      "DeepFace": {"fake_probability": 0.0, "confidence": 1.0},
-      "FaceRecognition": {"fake_probability": 0.15, "confidence": 0.85}
-    }
-  },
-  "model_info": {
-    "name": "Ensemble (CNN + DeepFace + FaceRecognition)"
+    "verdict": "FALSE",
+    "orin_img": "base64_encoded_gradcam_image...",
+    "result_img": "base64_encoded_cropped_face..."
   }
 }
 ```
@@ -288,7 +267,7 @@ curl "http://localhost:8000/api/inference/result/b64a8b5d-732b-4746-a575-fca7bd9
 ### 3. 통계 조회
 
 ```bash
-curl "http://localhost:8000/api/inference/statistics"
+curl "http://localhost:8000/inference/statistics"
 ```
 
 **응답:**
@@ -305,11 +284,14 @@ curl "http://localhost:8000/api/inference/statistics"
 
 ```python
 import requests
+import base64
+from PIL import Image
+from io import BytesIO
 
 # 1. 파일 업로드
 with open("test_image.jpg", "rb") as f:
     response = requests.post(
-        "http://localhost:8000/api/inference/upload",
+        "http://localhost:8000/inference/upload",
         files={"file": f}
     )
     task_id = response.json()["task_id"]
@@ -317,11 +299,17 @@ with open("test_image.jpg", "rb") as f:
 
 # 2. 결과 조회
 result = requests.get(
-    f"http://localhost:8000/api/inference/result/{task_id}"
+    f"http://localhost:8000/inference/result/{task_id}"
 ).json()
 
 print(f"Is Fake: {result['detection_result']['is_fake']}")
 print(f"Confidence: {result['detection_result']['confidence']:.2%}")
+print(f"Verdict: {result['detection_result']['verdict']}")
+
+# 3. Grad-CAM 이미지 디코딩
+gradcam_base64 = result['detection_result']['orin_img']
+gradcam_image = Image.open(BytesIO(base64.b64decode(gradcam_base64)))
+gradcam_image.save("gradcam_result.jpg")
 ```
 
 ## 🗄️ 데이터베이스 설정
@@ -404,7 +392,8 @@ MAX_FILE_SIZE=10485760          # 10MB
 ALLOWED_EXTENSIONS=jpg,jpeg,png,webp
 
 # Model Settings
-DEFAULT_MODEL=ensemble          # ensemble | cnn | deepface | ...
+MODEL_WEIGHTS_PATH=app/models/DeepfakeBench_main/training/pretrained/xception_best.pth
+DEVICE=cpu                      # cpu | cuda
 CONFIDENCE_THRESHOLD=0.5        # 0.0 ~ 1.0
 ```
 
@@ -426,14 +415,13 @@ CONFIDENCE_THRESHOLD=0.5        # 0.0 ~ 1.0
 |------|------|------|
 | Redis 캐시 히트 | ~10ms | 최근 조회한 결과 |
 | MongoDB 조회 | ~50ms | DB에서 직접 조회 |
-| Ensemble 추론 | ~400ms | CNN + DeepFace + FaceRec |
-| CNN 단독 | ~50ms | 가장 빠른 탐지 |
-| DeepFace 단독 | ~200ms | 감정 분석 포함 |
+| Xception 추론 | ~300-500ms | 딥페이크 탐지 + Grad-CAM |
+| 얼굴 검출 | ~50ms | 얼굴 영역 추출 |
 
 ### 메모리 사용량
 
 - 서버 기본: ~200MB
-- AI 모델 로딩 후: ~1.5GB
+- Xception 모델 로딩 후: ~1.2GB
 - Redis 캐시 (1000건): ~50MB
 - MongoDB 저장소 (10000건): ~100MB
 
@@ -441,7 +429,7 @@ CONFIDENCE_THRESHOLD=0.5        # 0.0 ~ 1.0
 
 - 캐시 히트: ~1000 req/s
 - DB 조회: ~200 req/s
-- 추론 + 저장: ~2.5 req/s (병렬 처리 가능)
+- 추론 + 저장: ~2-3 req/s (병렬 처리 가능)
 
 ## 🔒 보안
 
