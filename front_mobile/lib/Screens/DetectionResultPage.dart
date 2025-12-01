@@ -101,7 +101,7 @@ class _DetectionResultPageState extends State<DetectionResultPage> {
                 ImageBox(
                   title: "Image",
                   description: "",
-                  processedImage: base64Decode(widget.result['detection_result']['result_img']),
+                  processedImage: widget.result['detection_result']['is_fake'] ? base64Decode(widget.result['detection_result']['result_img']) : null,
                   uploadedImage: this.uploadedImage,
                   onUploadTap: (){},
                 ),
