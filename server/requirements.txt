@@ -7,7 +7,8 @@ pydantic-settings==2.4.0
 # Image Processing
 pillow==10.4.0
 opencv-python-headless==4.10.0.84
-numpy<2.0.0
+numpy==1.26.4
+dlib==19.24.6
 
 # PyTorch & Deep Learning (DeepfakeBench)
 torch
@@ -23,6 +24,8 @@ imgaug
 lmdb
 grad-cam
 timm
+tensorboard
+albumentations
 
 # Database
 redis==5.2.1
