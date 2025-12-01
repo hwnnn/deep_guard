@@ -170,14 +170,15 @@ cd deep_guard\server
 
 # 2. 가상환경 생성 및 활성화
 py -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\activate
 
 # 3. Windows용 dlib 설치 (필수)
 # 3-1. https://github.com/z-mahmud22/Dlib_Windows_Python3.x 접속
 # 3-2. 본인의 Python 버전에 맞는 .whl 파일 다운로드
 #      예: Python 3.12 → dlib-19.24.99-cp312-cp312-win_amd64.whl
 # 3-3. 다운로드한 파일 경로로 설치
-python -m pip install "C:\Users\User\Downloads\dlib-19.24.99-cp312-cp312-win_amd64.whl"
+py -m pip install "C:\Users\User\Downloads\dlib-19.24.99-cp312-cp312-win_amd64.whl"
+# 3-4. requirements.txt에서 dlib==19.24.6 찾아서 주석 처리
 
 # 4. 나머지 의존성 설치
 pip install -r requirements.txt
