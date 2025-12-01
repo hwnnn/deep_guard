@@ -146,19 +146,44 @@ Query  → Check Redis → Check MongoDB → Check Fallback → Return result
 
 ### 1단계: 설치
 
+#### macOS / Linux
+
 ```bash
 # 1. 저장소 클론
 git clone https://github.com/hwnnn/deep_guard.git
 cd deep_guard/server
 
 # 2. 가상환경 생성 및 활성화
-python -m venv .venv
-source .venv/bin/activate  # macOS/Linux
-# .venv\Scripts\activate   # Windows
+python3 -m venv .venv
+source .venv/bin/activate
 
 # 3. 의존성 설치
 pip install -r requirements.txt
 ```
+
+#### Windows
+
+```powershell
+# 1. 저장소 클론
+git clone https://github.com/hwnnn/deep_guard.git
+cd deep_guard\server
+
+# 2. 가상환경 생성 및 활성화
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# 3. Windows용 dlib 설치 (필수)
+# 3-1. https://github.com/z-mahmud22/Dlib_Windows_Python3.x 접속
+# 3-2. 본인의 Python 버전에 맞는 .whl 파일 다운로드
+#      예: Python 3.12 → dlib-19.24.99-cp312-cp312-win_amd64.whl
+# 3-3. 다운로드한 파일 경로로 설치
+python -m pip install "C:\Users\User\Downloads\dlib-19.24.99-cp312-cp312-win_amd64.whl"
+
+# 4. 나머지 의존성 설치
+pip install -r requirements.txt
+```
+
+> **Windows 중요**: dlib는 컴파일이 필요한 라이브러리이므로 사전 빌드된 wheel 파일을 먼저 설치해야 합니다. 위 GitHub 링크에서 본인의 Python 버전 (예: cp312 = Python 3.12)에 맞는 파일을 다운로드하세요.
 
 ### 2단계: 데이터베이스 실행 (선택)
 
