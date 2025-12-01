@@ -7,7 +7,7 @@ pydantic-settings==2.4.0
 # Image Processing
 pillow==10.4.0
 opencv-python-headless==4.10.0.84
-numpy<2.0.0
+numpy==1.26.4
 dlib==19.24.0
 
 # PyTorch & Deep Learning (DeepfakeBench)
