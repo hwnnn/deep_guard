@@ -40,6 +40,60 @@ class _DetectionResultPageState extends State<DetectionResultPage> {
     );
   }
 
+  void _showReportDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // 바깥 터치 시 닫히게 할지 여부
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+
+          title: const Text(
+            "Report Guide",
+            style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold
+            ),
+          ),
+
+          content: const SingleChildScrollView(
+            child: Text(
+              "1단계. 긴급 피해 발생 시 즉시 신고\n"
+              "영상이 유포 중이거나 협박, 금전 요구, 명예훼손 등 즉각적인 피해가 발생한 경우, 112로 즉시 신고하세요.\n"
+              "가까운 경찰서 사이버수사팀을 직접 방문하거나 사이버범죄 신고시스템\n"
+              "(ecrm.police.go.kr)을 통해 온라인으로도 신고 가능합니다.\n"
+              "신고 시에는 영상 URL, 채팅 내용, 캡처 등 가능한 많은 증거를 확보해야 합니다.\n"
+              "2단계. 영상 삭제 및 상담 지원 요청\n"
+              "불법 촬영물 또는 딥페이크 영상이 온라인상에 게시된 경우, 디지털성범죄 피해자 지원\n"
+              "센터를 통해 삭제·차단 요청 및 법률·심리 상담 요청이 가능합니다.\n"
+              "전문 상담원이 1:1로 지원하며, 피해자 본인뿐 아니라 가족·지인도 상담할 수 있습니다.\n"
+              "전화: 02-735-8994\n"
+              "홈페이지: www.digital-sexcrime.kr\n"
+              "운영시간: 평일 09:00~18:00 (주말·공휴일 휴무)\n",
+                style: TextStyle(
+                fontSize: 16,
+                height: 1.4,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Close",
+                style: TextStyle(fontSize: 16),
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,6 +216,22 @@ class _DetectionResultPageState extends State<DetectionResultPage> {
                           "얼굴 경계 (블렌딩 실패)\n"
                           "치아/혀 (생성 어려운 부위)\n"
                         ),
+                        Container(
+                            alignment: Alignment.center,
+                            child: CustomElevatedButton(
+                                text: 'Report',
+                                textColor: Colors.white,
+                                fontSize: 16,
+                                backgroundColor: Colors.blue,
+                                width: MediaQuery.sizeOf(context).width * 0.5,
+                                onPressed: (){
+                                  _showReportDialog(context);
+                                }
+                            )
+                        ),
+
+                        const SizedBox(height: 10),
+
                         Container(
                           alignment: Alignment.center,
                           child: CustomElevatedButton(

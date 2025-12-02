@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Bars/header_footer.dart';
@@ -24,8 +26,35 @@ class _UploadPageState extends State<UploadPage> {
   // 업로드 버튼 클릭 시 호출될 함수
   void _pickUploadImage() async {
     final uploadImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (uploadImage == null) return; // 사용자가 선택 안 함
+
+    // 파일 크기 측정
+    final file = File(uploadImage.path);
+    final int sizeInBytes = await file.length();
+    final double sizeInMB = sizeInBytes / (1024 * 1024);
+
+    // ---------- 10MB 제한 ----------
+    if (sizeInMB > 10) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "파일 용량이 너무 큽니다 (10MB 이하만 업로드 가능합니다).",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      return; // 업로드 로직 중단
+    }
+
+    // ---------- 정상 업로드 ----------
     setState(() {
-      this.uploadImage = uploadImage; // TODO: 이미지 선택 로직
+      this.uploadImage = uploadImage;
       this.enableBack = true;
     });
   }
