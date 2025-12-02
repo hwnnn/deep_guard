@@ -73,6 +73,7 @@ class _DetectingPageState extends State<DetectingPage> {
       Navigator.pushReplacement(
         context,
         RoutingPoint.generateRoute(
+          uploadedImage: this.uploadedImage,
           settings: const RouteSettings(
             name: RoutingPoint.detectionfailed,
           ),
@@ -223,7 +224,7 @@ class DetectionFailedPage extends StatelessWidget{
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const SizedBox(height: 60),
+                const SizedBox(height: 20),
                 const Text(
                   'Analyzing\nFailed',
                   style: TextStyle(
@@ -232,10 +233,29 @@ class DetectionFailedPage extends StatelessWidget{
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                 Image(
                   image: AssetImage(failedGif ?? ""),
                 ),
+                CustomElevatedButton(
+                    text: 'Home',
+                    textColor: Colors.white,
+                    fontSize: 16,
+                    backgroundColor: Colors.blue,
+                    width: MediaQuery.sizeOf(context).width * 0.5,
+                    onPressed: (){
+                      Navigator.push(
+                          context,
+                          RoutingPoint.generateRoute(
+                              // uploadedImage: this.uploadedImage,
+                              settings: const RouteSettings(
+                                  name: RoutingPoint.upload
+                              )
+                          )
+                      );
+                    }
+                ),
+                const SizedBox(height: 10),
                 CustomElevatedButton(
                     text: 'Retry',
                     textColor: Colors.white,
